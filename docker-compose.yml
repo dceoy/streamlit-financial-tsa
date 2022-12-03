@@ -1,0 +1,19 @@
+---
+version: '3'
+
+services:
+  streamlit-financial-tsa:
+    container_name: streamlit-financial-tsa
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: dceoy/streamlit:latest
+    ports:
+      - 8501:8501
+    volumes:
+      - ${PWD}:/wd
+    working_dir: /wd
+    entrypoint:
+      - /usr/local/bin/streamlit
+    command:
+      - hello
