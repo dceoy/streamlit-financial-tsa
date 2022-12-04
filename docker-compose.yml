@@ -16,4 +16,5 @@ services:
     entrypoint:
       - /usr/local/bin/streamlit
     command:
-      - hello
+      - run
+      - app.py

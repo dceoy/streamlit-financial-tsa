@@ -20,7 +20,8 @@ RUN set -e \
 RUN set -e \
       && /usr/bin/python3 /tmp/get-pip.py \
       && pip install -U --no-cache-dir pip \
-      && pip install -U --no-cache-dir streamlit
+      && pip install -U --no-cache-dir \
+        pandas pandas-datareader scipy statsmodels streamlit
 
 EXPOSE 8501
 
