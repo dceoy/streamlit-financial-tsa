@@ -1,39 +1,71 @@
 #!/usr/bin/env python
 
-import altair as alt
-import numpy as np
-import pandas as pd
+import argparse
+import logging
+import os
+from datetime import datetime
+from pprint import pformat
+
+# import altair as alt
+# import numpy as np
+# import pandas as pd
+import pandas_datareader.data as pdd
 import streamlit as st
 
-st.header('st.write')
+__version__ = 'v0.0.1'
 
-# Example 1
 
-st.write('Hello, *World!* :sunglasses:')
+def main():
+    args = _parse_arguments()
+    _set_log_config(args=args)
+    logger = logging.getLogger(__name__)
+    logger.info('Run the Streamlit app.')
 
-# Example 2
+    start = datetime(2010, 1, 1)
+    end = datetime.now()
+    start = end.replace(year=(end.year - 1))
+    gdp = pdd.DataReader('GDP', 'fred', start, end)
 
-st.write(1234)
+    st.header('Finantial Data')
+    st.write('GDP', gdp)
 
-# Example 3
 
-df = pd.DataFrame({
-    'first column': [1, 2, 3, 4],
-    'second column': [10, 20, 30, 40]
-})
-st.write(df)
+def _load_data_with_pandas_datareader(**kwargs):
+    logger = logging.getLogger(__name__)
+    logger.info('Argments for DataReader:' + os.linesep + pformat(kwargs))
+    return pdd.DataReader(**kwargs)
 
-# Example 4
 
-st.write('Below is a DataFrame:', df, 'Above is a dataframe.')
+def _set_log_config(args):
+    if args.debug:
+        level = logging.DEBUG
+    elif args.info:
+        level = logging.INFO
+    else:
+        level = logging.WARNING
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S', level=level
+    )
 
-# Example 5
 
-df2 = pd.DataFrame(
-    np.random.randn(200, 3),
-    columns=['a', 'b', 'c']
-)
-c = alt.Chart(df2).mark_circle().encode(
-    x='a', y='b', size='c', color='c', tooltip=['a', 'b', 'c']
-)
-st.write(c)
+def _parse_arguments():
+    parser = argparse.ArgumentParser(
+        prog='streamlit-financial-tsa',
+        description='Streamlit Application for Financial Time-series Analyses'
+    )
+    parser.add_argument(
+        '--version', action='version', version=f'%(prog)s {__version__}'
+    )
+    logging_level_parser = parser.add_mutually_exclusive_group()
+    logging_level_parser.add_argument(
+        '--debug', action='store_true', help='Set logging level to DEBUG'
+    )
+    logging_level_parser.add_argument(
+        '--info', action='store_true', help='Set logging level to INFO'
+    )
+    return parser.parse_args()
+
+
+if __name__ == '__main__':
+    main()
