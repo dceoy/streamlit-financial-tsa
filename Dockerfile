@@ -27,4 +27,4 @@ RUN set -e \
 EXPOSE 8501
 
 ENTRYPOINT ["/usr/local/bin/streamlit"]
-CMD ["run", "app.py"]
+CMD ["run", "index.py"]

@@ -19,6 +19,6 @@ services:
       - /usr/local/bin/streamlit
     command:
       - run
-      - app.py
+      - index.py
       - --
       - --debug
