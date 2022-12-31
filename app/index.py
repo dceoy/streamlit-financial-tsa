@@ -13,9 +13,12 @@ def main():
     _set_log_config(args=args)
     logger = logging.getLogger(__name__)
     logger.debug(f'__file__: {__file__}')
-    st.set_page_config(page_title='financial-tsa', page_icon='👋')
-    st.markdown('# Main page 🎈')
-    st.sidebar.markdown('# Main page 🎈')
+    st.set_page_config(
+        page_title='financial-tsa', page_icon='🧊', layout='wide',
+        initial_sidebar_state='expanded'
+    )
+    st.header('Main page 🎈')
+    st.sidebar.header('Main page 🎈')
 
 
 def _set_log_config(args):
@@ -41,10 +44,10 @@ def _parse_arguments():
     )
     logging_level_parser = parser.add_mutually_exclusive_group()
     logging_level_parser.add_argument(
-        '--debug', action='store_true', help='Set logging level to DEBUG'
+        '--debug', action='store_true', help='set logging level to DEBUG'
     )
     logging_level_parser.add_argument(
-        '--info', action='store_true', help='Set logging level to INFO'
+        '--info', action='store_true', help='set logging level to INFO'
     )
     return parser.parse_args()
 

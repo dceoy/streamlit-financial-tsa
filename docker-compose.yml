@@ -19,6 +19,7 @@ services:
       - /usr/local/bin/streamlit
     command:
       - run
-      - index.py
+      - app/index.py
+      # - --logger.level=info
       - --
       - --debug
