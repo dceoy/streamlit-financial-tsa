@@ -14,8 +14,8 @@ def main():
     logger = logging.getLogger(__name__)
     logger.debug(f'__file__: {__file__}')
     st.set_page_config(
-        page_title='financial-tsa', page_icon='🧊', layout='wide',
-        initial_sidebar_state='expanded'
+        page_title='Financial Time-series Analyses', page_icon='🧊',
+        layout='wide', initial_sidebar_state='auto'
     )
     st.header('Main page 🎈')
     st.sidebar.header('Main page 🎈')
