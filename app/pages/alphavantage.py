@@ -5,7 +5,10 @@ import os
 from datetime import date, datetime, time, timedelta
 from pprint import pformat
 
+import pandas as pd
 import pandas_datareader.data as pdd
+import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
 
@@ -40,9 +43,24 @@ def main():
                 start=datetime.combine(date_from, time()),
                 end=(datetime.combine(date_to, time()) + timedelta(days=1)),
                 api_key=api_key
+            ).reset_index().assign(
+                time=lambda d: pd.to_datetime(d['index'])
+            ).drop(columns='index')
+            st.plotly_chart(
+                go.Figure(
+                    data=[
+                        go.Candlestick(
+                            x=df['time'], open=df['open'], high=df['high'],
+                            low=df['low'], close=df['close']
+                        )
+                    ]
+                ),
+                theme='streamlit', use_container_width=True
             )
-            st.line_chart(data=df, y='close', use_container_width=True)
-            st.area_chart(data=df, y='volume', use_container_width=True)
+            st.plotly_chart(
+                px.area(df, x='time', y='volume'),
+                theme='streamlit', use_container_width=True
+            )
             st.write('Data Frame:', df)
 
 

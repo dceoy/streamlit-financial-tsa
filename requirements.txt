@@ -1,5 +1,6 @@
 pandas
 pandas-datareader
+plotly
 scipy
 statsmodels
 streamlit
