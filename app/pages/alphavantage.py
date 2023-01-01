@@ -5,9 +5,6 @@ import os
 from datetime import date, datetime, time, timedelta
 from pprint import pformat
 
-# import altair as alt
-# import numpy as np
-# import pandas as pd
 import pandas_datareader.data as pdd
 import streamlit as st
 
@@ -17,7 +14,7 @@ def main():
     logger.debug(f'__file__: {__file__}')
     api_key = os.environ['ALPHAVANTAGE_API_KEY']
     today = date.today()
-    st.header('Alpha Vantage')
+    st.header('Historical Time Series Data from Alpha Vantage')
     with st.sidebar.form('condition'):
         st.header('Condition')
         symbol = st.text_input('Symbol:', value='')
@@ -44,6 +41,8 @@ def main():
                 end=(datetime.combine(date_to, time()) + timedelta(days=1)),
                 api_key=api_key
             )
+            st.line_chart(data=df, y='close', use_container_width=True)
+            st.area_chart(data=df, y='volume', use_container_width=True)
             st.write('Data Frame:', df)
 
 
