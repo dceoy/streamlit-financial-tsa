@@ -20,28 +20,39 @@ def main():
     st.header('Historical Time Series Data from Alpha Vantage')
     with st.sidebar.form('condition'):
         st.header('Condition')
-        symbol = st.text_input('Symbol:', value='')
-        endpoint = st.selectbox(
-            'Time Series Endpoint:',
-            options=(
-                'av-intraday', 'av-daily', 'av-daily-adjusted', 'av-weekly',
-                'av-weekly-adjusted', 'av-monthly', 'av-monthly-adjusted',
-                'av-forex-daily'
-            )
+        st.session_state['symbol'] = st.text_input(
+            'Symbol:', value=(st.session_state.get('symbol') or '')
         )
-        date_from = st.date_input('From:', value=today)
-        date_to = st.date_input('To:', value=today)
+        endpoint_options = (
+            'av-intraday', 'av-daily', 'av-daily-adjusted', 'av-weekly',
+            'av-weekly-adjusted', 'av-monthly', 'av-monthly-adjusted',
+            'av-forex-daily'
+        )
+        endpoint = st.selectbox(
+            'Time Series Endpoint:', options=endpoint_options,
+            index=(st.session_state.get('endpoint_index') or 0)
+        )
+        st.session_state['endpoint_index'] = endpoint_options.index(endpoint)
+        st.session_state['date_from'] = st.date_input(
+            'From:', value=(st.session_state.get('date_from') or today)
+        )
+        st.session_state['date_to'] = st.date_input(
+            'To:', value=(st.session_state.get('date_to') or today)
+        )
         submitted = st.form_submit_button('Submit')
     if submitted:
-        if not symbol:
+        if not st.session_state['symbol']:
             st.error('A symbol is required!', icon='🚨')
-        elif date_from > date_to:
+        elif st.session_state['date_from'] > st.session_state['date_to']:
             st.error('The date interval is invalid!', icon='🚨')
         else:
             df = _load_data_with_pandas_datareader(
-                name=symbol, data_source=endpoint,
-                start=datetime.combine(date_from, time()),
-                end=(datetime.combine(date_to, time()) + timedelta(days=1)),
+                name=st.session_state['symbol'], data_source=endpoint,
+                start=datetime.combine(st.session_state['date_from'], time()),
+                end=(
+                    datetime.combine(st.session_state['date_to'], time())
+                    + timedelta(days=1)
+                ),
                 api_key=api_key
             ).reset_index().assign(
                 time=lambda d: pd.to_datetime(d['index'])
@@ -61,7 +72,7 @@ def main():
                 px.area(df, x='time', y='volume'),
                 theme='streamlit', use_container_width=True
             )
-            st.write('Data Frame:', df)
+            st.write('Data Frame:', df.set_index('time'))
 
 
 def _load_data_with_pandas_datareader(**kwargs):
